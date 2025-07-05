@@ -89,10 +89,13 @@ class Border(QtWidgets.QFrame):
             return
         key = event.key()
         if key == Qt.Key.Key_P:
-            self.paused = True
-            return
-        if self.paused:
-            return
+            self.paused = not self.paused
+            if self.paused:
+                self.timer.stop()
+        else:
+            self.timer.start(Border.DROP_SPEED, self)
+        return
+    
         if key == Qt.Key.Key_Left:
             self.moveFigure(self.curPiece, self.corr_x-1, self.corr_y)
         elif key == Qt.Key.Key_Right:
