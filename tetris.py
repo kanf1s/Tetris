@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import Qt
@@ -41,21 +41,29 @@ class Tetris(QMainWindow):
 
         self.show()
 
+    def resource_path(relative_path):
+        """Возвращает путь к ресурсу (внутри .exe или рядом в .py)"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+    
     def start_game(self):
         self.tetris = Tetris(self)
-        stylesheet = '''
-        QMainWindow{
-        background-image: url("wallpaper.jpg");
-        background-repeat: no-repeat;
-        background-position: center;
-        }
-        '''
-        self.tetris.setStyleSheet(stylesheet)
+        image_path = self.resource_path("wallpaper.png")
+        self.tetris.setStyleSheet(f'''
+            QMainWindow {{
+                background-image: url("{image_path.replace('\\', '/')}");
+                background-repeat: no-repeat;
+                background-position: center;
+            }}
+        ''')
+
         self.tetris.setFixedSize(360, 760)
         self.tetris.setWindowTitle('Tetris')
         self.close()
         self.Bord = Border(self)
         self.tetris.setCentralWidget(self.Bord)
+        self.Bord.setFocus()
         self.tetris.show()
 
 class Border(QtWidgets.QFrame):
